@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Cinema Booking</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* GitHub Dark Mode Blue-Black */
+        }
+        .card-shadow {
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+        .card-shadow:hover {
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+
+    <!-- Main Container -->
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-10 py-4 border-b border-gray-700">
+            <h1 class="text-4xl font-extrabold text-white tracking-tight">
+                Move-E <span class="text-red-500">Booking</span>
+            </h1>
+            <p class="text-gray-400 mt-2">Select a movie to view ticket options.</p>
+        </header>
+
+        <!-- Movie List -->
+        <section id="movie-list" class="space-y-6">
+            <!-- Movies will be rendered here -->
+        </section>
+
+    </div>
+
+    <script>
+        // Mock Movie Data
+        const movies = [
+            { id: 101, title: "choas by Time", price: 100.00, duration: "135 min", genre: "Sci-Fi/Action" },
+            { id: 102, title: "Life under this", price: 150.00, duration: "110 min", genre: "Drama/Mystery" },
+            { id: 103, title: "Cooked", price: 100.00, duration: "98 min", genre: "Thriller" },
+            { id: 104, title: "The Last Laugh", price: 200.00, duration: "105 min", genre: "Comedy" },
+        ];
+
+        const movieContainer = document.getElementById('movie-list');
+
+        /**
+         * Renders all movie cards and their interactive components.
+         */
+        function renderMovies() {
+            movieContainer.innerHTML = '';
+            movies.forEach(movie => {
+                const card = document.createElement('div');
+                card.className = 'bg-[#161b22] p-5 rounded-xl border border-gray-700 card-shadow';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">${movie.title}</h2>
+                            <p class="text-sm text-gray-400">${movie.genre} | ${movie.duration}</p>
+                        </div>
+                        <button 
+                            id="btn-${movie.id}"
+                            onclick="toggleBookingSection(${movie.id})"
+                            class="bg-red-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors transform hover:scale-105"
+                        >
+                            Select Tickets
+                        </button>
+                    </div>
+
+                    <!-- Booking Section (Hidden by default) -->
+                    <div id="booking-${movie.id}" class="mt-5 pt-4 border-t border-gray-700 hidden">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-800 p-4 rounded-lg">
+                            <div class="mb-3 sm:mb-0">
+                                <p class="text-lg text-gray-300 font-medium">Ticket Price (per person):</p>
+                                <p id="price-${movie.id}" class="text-3xl font-extrabold text-green-400">${movie.price.toFixed(2)}</p>
+                            </div>
+
+                            <div class="flex items-center space-x-4">
+                                <label for="tickets-${movie.id}" class="text-gray-300 font-medium whitespace-nowrap">Quantity:</label>
+                                <input 
+                                    type="number" 
+                                    id="tickets-${movie.id}" 
+                                    min="1" 
+                                    value="1" 
+                                    onchange="updateTotal(${movie.id}, ${movie.price})"
+                                    class="w-16 p-2 rounded-lg bg-gray-700 text-white text-center border border-gray-600 focus:ring-red-500 focus:border-red-500"
+                                >
+                            </div>
+                        </div>
+                        
+                        <!-- Total and Confirm Button -->
+                        <div class="mt-4 flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
+                            <div class="text-xl font-bold text-white">
+                                Total: <span id="total-${movie.id}" class="text-red-500">${movie.price.toFixed(2)}</span>
+                            </div>
+                            <button 
+                                onclick="confirmBooking(${movie.id}, '${movie.title}', ${movie.price})"
+                                class="w-full sm:w-auto bg-red-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-red-700 transition-colors"
+                            >
+                                Confirm Booking
+                            </button>
+                        </div>
+                        <p id="message-${movie.id}" class="text-center mt-3 text-sm font-medium hidden"></p>
+                    </div>
+                `;
+                movieContainer.appendChild(card);
+            });
+        }
+
+        /**
+         * Toggles the visibility of the booking section for a specific movie.
+         */
+        function toggleBookingSection(movieId) {
+            const bookingSection = document.getElementById(`booking-${movieId}`);
+            const button = document.getElementById(`btn-${movieId}`);
+            
+            // Hide all other booking sections
+            movies.forEach(movie => {
+                const otherSection = document.getElementById(`booking-${movie.id}`);
+                const otherButton = document.getElementById(`btn-${movie.id}`);
+                if (movie.id !== movieId && !otherSection.classList.contains('hidden')) {
+                    otherSection.classList.add('hidden');
+                    otherButton.textContent = 'Select Tickets';
+                }
+            });
+
+            // Toggle current booking section
+            bookingSection.classList.toggle('hidden');
+            if (!bookingSection.classList.contains('hidden')) {
+                button.textContent = 'Hide Options';
+            } else {
+                button.textContent = 'Select Tickets';
+            }
+        }
+
+        /**
+         * Calculates and updates the total price based on ticket quantity.
+         */
+        function updateTotal(movieId, price) {
+            const quantityInput = document.getElementById(`tickets-${movieId}`);
+            const totalElement = document.getElementById(`total-${movieId}`);
+            
+            let quantity = parseInt(quantityInput.value);
+            
+            if (isNaN(quantity) || quantity < 1) {
+                quantity = 1;
+                quantityInput.value = 1;
+            }
+
+            const total = (quantity * price).toFixed(2);
+            totalElement.textContent = `${total}`;
+        }
+
+        /**
+         * Mocks a successful booking and displays a message.
+         */
+        function confirmBooking(movieId, title, price) {
+            const quantity = parseInt(document.getElementById(`tickets-${movieId}`).value);
+            const total = (quantity * price).toFixed(2);
+            const messageElement = document.getElementById(`message-${movieId}`);
+
+            // Display success message
+            messageElement.textContent = `✅ Successfully booked ${quantity} ticket(s) for "${title}". Total: ${total}.`;
+            messageElement.classList.remove('hidden');
+            messageElement.classList.add('text-green-500');
+
+            // Optionally hide the booking section after confirmation
+            setTimeout(() => {
+                toggleBookingSection(movieId);
+                messageElement.classList.add('hidden');
+                document.getElementById(`tickets-${movieId}`).value = 1; // Reset quantity
+                updateTotal(movieId, price);
+            }, 3000);
+        }
+
+        // Initialize the app
+        window.onload = renderMovies;
+    </script>
+</body>
+</html>
