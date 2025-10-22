@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-assignment
+  labels:
+    app: devops-assignment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-assignment
+  template:
+    metadata:
+      labels:
+        app: devops-assignment
+    spec:
+      containers:
+        - name: devops-assignment
+          image: vardhan2244/devops-assignment:latest
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
