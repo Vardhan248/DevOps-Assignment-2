@@ -66,12 +66,6 @@ Important files (where to look):
 
 Before running the pipeline or testing manually, make sure you have the following installed and configured. Commands below are for Windows PowerShell (you can adapt them for macOS/Linux):
 
-- Python 3.10+ (optional): some utility scripts may require Python. Download from https://www.python.org/downloads/.
-
-	```powershell
-	python --version
-	```
-
 - Node.js (LTS) and npm: the application is a Node.js app.
 
 	```powershell
