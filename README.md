@@ -1,18 +1,17 @@
 <!-- README for DevOps-Assignment-2 -->
 
 
+
+# 🚀 DevOps Assignment II – Node.js Application Deployment
+
 ![Node.js LTS](https://img.shields.io/badge/Node.js-LTS-brightgreen?logo=node.js)
 ![Docker Enabled](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker)
 ![Jenkins CI/CD](https://img.shields.io/badge/Jenkins-CI%2FCD-red?logo=jenkins)
 ![Kubernetes Ready](https://img.shields.io/badge/Kubernetes-Ready-blue?logo=kubernetes)
 ![Minikube](https://img.shields.io/badge/Minikube-Local-orange)
 
-
-# 🚀 DevOps Assignment II – Node.js Application Deployment
-
-Simple **Node.js** *Movie Ticket booking 🎬* web app deployed with **Docker** and **Kubernetes** using a **Jenkins CI/CD Pipeline**.
-
 ---
+Simple **Node.js** *Movie Ticket booking 🎬* web app deployed with **Docker** and **Kubernetes** using a **Jenkins CI/CD Pipeline**.
 
 ## 📘 Overview
 This project demonstrates a complete CI/CD pipeline for a Node.js application. It uses Jenkins to automate build, test, containerization (Docker) and deployment to a local Kubernetes (Minikube) cluster.
